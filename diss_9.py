@@ -64,7 +64,7 @@ def main():
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
     getCharmanderLink(soup)
-    #getEggMoves('scizor')
+    getEggMoves('scizor')
 
 class TestAllMethods(unittest.TestCase):
     def setUp(self):
