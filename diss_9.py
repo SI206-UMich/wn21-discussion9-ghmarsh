@@ -6,24 +6,46 @@ import unittest
 # Task 1: Get the URL that links to the Pokemon Charmander's webpage.
 # HINT: You will have to add https://pokemondb.net to the URL retrieved using BeautifulSoup
 def getCharmanderLink(soup):
-    pass
+    tags = soup.find_all('a')
+    #print(tags)
+    for tag in tags:
+        possible = tag.get('href', None)
+        if re.search("[cC]harmander", possible):
+            return "https://pokemondb.net" + possible
+
+
 
 # Task 2: Get the details from the box below "Egg moves". Get all the move names and store
 #         them into a list. The function should return that list of moves.
 def getEggMoves(pokemon):
     url = 'https://pokemondb.net/pokedex/'+pokemon
-    #add code here
+    moves = []
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    tags = soup.find_all('table', class_ = "data-table")
+    table = tags[2]
+    data = table.find_all('tr')
+    new_data = data[1:]
+    for x in new_data:
+        reg = x.find('a', class_ = "ent-name")
+        moves.append(reg.text)
+    return moves
+        
 
 # Task 3: Create a regex expression that will find all the times that have these formats: @2pm @5 pm @10am
 # Return a list of these times without the '@' symbol. E.g. ['2pm', '5 pm', '10am']
 def findLetters(sentences):
     # initialize an empty list
-    
+    times = []
 
     # define the regular expression
-    
+    reg = r"@\d\d?\s?(?:am|pm)"
 
     # loop through each sentence or phrase in sentences
+    for sent in sentences:
+        another = re.findall(reg, sent)
+        for word in another:
+            times.append(word[1:])
     
 
     # find all the words that match the regular expression in each sentence
@@ -33,6 +55,7 @@ def findLetters(sentences):
 
 
     #return the list of the last letter of all words that begin or end with a capital letter
+    return times
 
 
 
@@ -41,7 +64,7 @@ def main():
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
     getCharmanderLink(soup)
-    getEggMoves('scizor')
+    #getEggMoves('scizor')
 
 class TestAllMethods(unittest.TestCase):
     def setUp(self):
